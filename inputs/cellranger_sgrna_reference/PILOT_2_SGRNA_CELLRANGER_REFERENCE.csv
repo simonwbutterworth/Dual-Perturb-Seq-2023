@@ -1,0 +1,3 @@
+id,name,read,pattern,sequence,feature_type,target_gene_id,target_gene_name
+MYR1,MYR1,R2,(BC)GTTTAAGAGCTATGCTGGAA,GGGACAACACGCCTCTACGG,CRISPR Guide Capture,Non-Targeting,Non-Targeting
+UPRT,UPRT,R2,(BC)GTTTAAGAGCTATGCTGGAA,GAGGAGGCGAATCAGGCGGT,CRISPR Guide Capture,Non-Targeting,Non-Targeting
