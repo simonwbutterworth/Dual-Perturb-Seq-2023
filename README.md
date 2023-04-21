@@ -4,7 +4,6 @@ Code repository to reproduce single-cell perturb-seq data analysis in the paper:
 
 >**Mapping host-microbe transcriptional interactions by dual perturb-seq**
 <br>Simon Butterworth, Kristina Kordova, Sambamurthy Chandrasekaran, Kaitlin K Thomas, Francesca Torelli, Eloise J Lockyer, Anita Koshy, Moritz Treeck<br>
-DOI: 
 
 ## Introduction
 
