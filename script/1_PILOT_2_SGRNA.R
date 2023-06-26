@@ -113,7 +113,7 @@ ggplot(mapping=aes(x=pilot@reductions$umap@cell.embeddings[,"UMAP_1"], y=pilot@r
   geom_point(size=1.5)+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(),plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  scale_colour_gradient(low="grey80", high="slateblue")+
+  scale_colour_gradient(low="grey80", high="darkorchid")+
   labs(x=NULL, y=NULL, title=NULL)+
   scale_x_reverse()+scale_y_reverse()
 ggsave(filename = "../outputs/fig_1/FIG_1H_HS_UMAP_BIRC3.png", width=1.7, height=1.7, dpi=300, scale=1)
@@ -122,7 +122,7 @@ ggplot(mapping=aes(x=pilot@reductions$umap@cell.embeddings[,"UMAP_1"],y=pilot@re
   geom_point(size=1.5)+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(),plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  scale_colour_gradient(low="grey80", high="slateblue")+
+  scale_colour_gradient(low="grey80", high="darkorchid")+
   labs(x=NULL, y=NULL, title=NULL)+
   scale_x_reverse()+scale_y_reverse()
 ggsave(filename = "../outputs/fig_1/FIG_1H_HS_UMAP_PTMA.png", width=1.7, height=1.7, dpi=300, scale=1)
@@ -131,7 +131,7 @@ ggplot(mapping=aes(x=pilot@reductions$umap@cell.embeddings[,"UMAP_1"],y=pilot@re
   geom_point(size=1.5)+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(), plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  scale_colour_gradient(low="grey80", high="slateblue")+
+  scale_colour_gradient(low="grey80", high="darkorchid")+
   labs(x=NULL, y=NULL, title=NULL)+
   scale_x_reverse()+scale_y_reverse()
 ggsave(filename = "../outputs/fig_1/FIG_1H_HS_UMAP_FTL.png", width=1.7, height=1.7, dpi=300, scale=1)
@@ -140,7 +140,7 @@ ggplot(mapping=aes(x=pilot@reductions$umap@cell.embeddings[,"UMAP_1"], y=pilot@r
   geom_point(size=1.5)+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(), plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  scale_colour_gradient(low="grey80", high="slateblue")+
+  scale_colour_gradient(low="grey80", high="darkorchid")+
   labs(x=NULL, y=NULL, title=NULL)+
   scale_x_reverse()+scale_y_reverse()
 ggsave(filename = "../outputs/fig_1/Fig_1H_HS_UMAP_ANXA1.png", width=1.7, height=1.7, dpi=300, scale=1)
@@ -165,7 +165,7 @@ ggplot(mapping=aes(x=pilot@reductions$umap@cell.embeddings[,"UMAP_1"], y=pilot@r
   geom_point(size=1.5)+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(),plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  scale_colour_gradient(low="grey80", high="slateblue")+
+  scale_colour_gradient(low="grey80", high="darkorchid")+
   labs(x=NULL, y=NULL, title=NULL)
 ggsave(filename = "../outputs/fig_1/FIG_1J_TG_UMAP_GAPDH2_G1A.png", width=1.7, height=1.7, dpi=300, scale=1)
 
@@ -174,7 +174,7 @@ ggplot(mapping=aes(x=pilot@reductions$umap@cell.embeddings[,"UMAP_1"], y=pilot@r
   geom_point(size=1.5)+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(),plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  scale_colour_gradient(low="grey80", high="slateblue")+
+  scale_colour_gradient(low="grey80", high="darkorchid")+
   labs(x=NULL, y=NULL, title=NULL)
 ggsave(filename = "../outputs/fig_1/FIG_1J_TG_UMAP_ACP_G1B.png", width=1.7, height=1.7, dpi=300, scale=1)
 
@@ -183,7 +183,7 @@ ggplot(mapping=aes(x=pilot@reductions$umap@cell.embeddings[,"UMAP_1"], y=pilot@r
   geom_point(size=1.5)+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(),plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  scale_colour_gradient(low="grey80", high="slateblue")+
+  scale_colour_gradient(low="grey80", high="darkorchid")+
   labs(x=NULL, y=NULL, title=NULL)
 ggsave(filename = "../outputs/fig_1/FIG_1J_TG_UMAP_ROP1_S.png", width=1.7, height=1.7, dpi=300, scale=1)
 
@@ -192,7 +192,7 @@ ggplot(mapping=aes(x=pilot@reductions$umap@cell.embeddings[,"UMAP_1"], y=pilot@r
   geom_point(size=1.5)+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(),plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  scale_colour_gradient(low="grey80", high="slateblue")+
+  scale_colour_gradient(low="grey80", high="darkorchid")+
   labs(x=NULL, y=NULL, title=NULL)
 ggsave(filename = "../outputs/fig_1/FIG_1J_TG_UMAP_MIC1_M.png", width=1.7, height=1.7, dpi=300, scale=1)
 
