@@ -3,7 +3,6 @@
 ##### Setup #####
 rm(list=ls())
 gc()
-memory.limit(size = 80000)
 source("../script/FUNCTIONS.R")
 screen <- readRDS(file="../outputs/seurat_objects/SCREEN_MERGED_SEURAT.rds")
 

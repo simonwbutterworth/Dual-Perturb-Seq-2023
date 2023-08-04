@@ -1,14 +1,14 @@
 ##### GLOBAL PACKAGES AND FUNCTIONS FOR DUAL-PERTURB-SEQ-2023 #####
 
-##### Libraries ##### 
-library(Seurat)
-library(tidyverse)
-library(scales)
-library(ggpubr)
-library(ggrepel)
-library(Hotelling)
-library(dichromat)
-library(VISION)
+##### Packages ##### 
+library(Seurat) #v4.3.0.1
+library(tidyverse)# v2.0.0
+library(scales) #v1.2.1
+library(ggpubr) #V0.6.0
+library(ggrepel) #v0.9.3
+library(Hotelling) #v1.0-8
+library(dichromat) #v2.0-0.1
+library(VISION) #v3.0.1
 
 ##### Functions #####
 
@@ -58,6 +58,18 @@ ImportFeatureBC_Mtx <- function(matrix, cells, features, sample.name, sample.id.
   data$percent.tg <- data$nCount_Tg/(data$nCount_Tg+data$nCount_Hs)*100
   # Return Seurat object
   data
+}
+
+
+nCountPlot <- function(object, xlims=c(1,1000000), ylims=c(1,1000000), pt.size=1, alpha=0.1) {
+  ggplot()+
+    geom_jitter(alpha=alpha, size=pt.size, aes(x=object[[]]$nCount_Tg, y=object[[]]$nCount_Hs, colour=object[[]]$orig.ident), width=0.1, height=0.1) +
+    scale_x_log10(labels = trans_format("log10", math_format(10^.x)), limits=xlims, expand=c(0,0), breaks=c(1,10,100,1000,10000,100000,1000000)) +
+    scale_y_log10(labels = trans_format("log10", math_format(10^.x)), limits=ylims, expand=c(0,0), breaks=c(1,10,100,1000,10000,100000,1000000)) +
+    theme_pubr(border=T) +
+    theme(aspect=1, legend.position = "none", plot.title = element_blank()) +
+    #annotation_logticks(long=grid::unit(0.01,"npc"), mid=grid::unit(0.01,"npc"), short=grid::unit(0.01,"npc"), colour = "grey85") +
+    labs(x="nCount_Tg", y="nCount_Hs")
 }
 
 

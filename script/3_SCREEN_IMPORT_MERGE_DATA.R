@@ -3,7 +3,6 @@
 ##### Setup #####
 rm(list=ls())
 gc()
-memory.limit(size = 80000)
 source("../script/FUNCTIONS.R")
 
 ##### Import, filter, and merge data from unstimulated screen samples #####

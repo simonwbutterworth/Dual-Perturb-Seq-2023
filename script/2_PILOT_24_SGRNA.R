@@ -1,4 +1,6 @@
 ##### Analysis of Pilot 24 sgRNA Experiment #####
+
+##### Setup #####
 rm(list = ls())
 gc()
 source("./FUNCTIONS.r")
@@ -62,7 +64,7 @@ ggsave(filename = "../outputs/fig_s2/FIG_S2D_CELLS_PER_TARGET_GENE.png", width=8
 ##### SCTransform, PCA, UMAP #####
 
 # SCTransform, PCA, UMAP
-pilot24 <- SCTransform(pilot24, assay="Hs")
+pilot24 <- SCTransform(pilot24, vst.flavor="v2", assay="Hs")
 pilot24 <- RunPCA(pilot24)
 pilot24 <- RunUMAP(pilot24, dims=1:10)
 
@@ -77,7 +79,8 @@ ggplot()+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(),
         plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  labs(x=NULL, y=NULL, title=NULL)
+  labs(x=NULL, y=NULL, title=NULL)+
+  scale_y_reverse()
 ggsave(filename = "../outputs/fig_s2/FIG_S2E_UMAP_UPRT.png", width=3.7, height=3.7, dpi=300, scale=1)
 
 # UMAP sg(MYR1)
@@ -91,7 +94,8 @@ ggplot()+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(),
         plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  labs(x=NULL, y=NULL, title=NULL)
+  labs(x=NULL, y=NULL, title=NULL)+
+  scale_y_reverse()
 ggsave(filename = "../outputs/fig_s2/FIG_S2E_UMAP_MYR1.png", width=1.7, height=1.7, dpi=300, scale=1)
 
 #sg(GRA16)
@@ -105,7 +109,8 @@ ggplot()+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(),
         plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  labs(x=NULL, y=NULL, title=NULL)
+  labs(x=NULL, y=NULL, title=NULL)+
+  scale_y_reverse()
 ggsave(filename = "../outputs/fig_s2/FIG_S2E_UMAP_GRA16.png", width=1.7, height=1.7, dpi=300, scale=1)
 
 #sg(GRA24)
@@ -119,7 +124,8 @@ ggplot()+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(),
         plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  labs(x=NULL, y=NULL, title=NULL)
+  labs(x=NULL, y=NULL, title=NULL)+
+  scale_y_reverse()
 ggsave(filename = "../outputs/fig_s2/FIG_S2E_UMAP_GRA24.png", width=1.7, height=1.7, dpi=300, scale=1)
 
 #sg(ROP16)
@@ -133,44 +139,45 @@ ggplot()+
   theme_pubr(border = T, legend="none")+
   theme(axis.text = element_blank(), axis.ticks=element_blank(), text=element_text(size=15), axis.ticks.length = unit(0, "pt"), axis.title = element_blank(),
         plot.margin = margin(t = 0, r=0, b = 0, l = 0, unit = "pt"), aspect=1)+
-  labs(x=NULL, y=NULL, title=NULL)
+  labs(x=NULL, y=NULL, title=NULL)+
+  scale_y_reverse()
 ggsave(filename = "../outputs/fig_s2/FIG_S2E_UMAP_ROP16.png", width=1.7, height=1.7, dpi=300, scale=1)
 
 ##### Find differentially expressed genes for each target #####
 
 # Run FindMarkers for each sgRNA
-markers <- data.frame(target=NA, gene=NA, avg_log2FC=NA, p_val=NA, p_val_bh=NA)
+markers <- data.frame(target=NA, gene=NA, avg_log2FC=NA, pct.1=NA, pct.2=NA, p_val=NA)
 for (i in unique(Idents(pilot24))[unique(Idents(pilot24))!="UPRT"]) {
-  markers.i <- FindMarkers(pilot24, ident.1 = i, ident.2 = "UPRT", assay = "SCT", logfc.threshold = 0.1, min.pct = 0)
-  markers.i$p_val_bh <- p.adjust(markers.i$p_val, method="BH")
+  markers.i <- FindMarkers(pilot24, ident.1 = i, ident.2 = "UPRT", assay = "SCT", logfc.threshold = -Inf, min.pct = 0)
   markers.i <- rownames_to_column(markers.i, var="gene")
-  markers.i <- data.frame(target=i, gene=markers.i$gene, avg_log2FC=markers.i$avg_log2FC, p_val=markers.i$p_val, p_val_bh=markers.i$p_val_bh)
-  markers.i <- filter(markers.i, p_val_bh<=0.05)
+  markers.i <- data.frame(target=i, gene=markers.i$gene, avg_log2FC=markers.i$avg_log2FC, pct.1=markers.i$pct.1, pct.2=markers.i$pct.2, p_val=markers.i$p_val)
   markers <- rbind(markers, markers.i)
   print(i)  
 }
 markers <- filter(markers, target!="NA")
-write.csv(markers, file="../outputs/supplementary_data/SUPPLEMENTARY_DATA_2_24_GUIDE_DE_GENES.csv")
-markers <- read.csv(file="../outputs/supplementary_data/SUPPLEMENTARY_DATA_2_24_GUIDE_DE_GENES.csv")
+markers$p_val_bh <- p.adjust(markers$p_val, method="BH")
+write.csv(markers, file="../outputs/supplementary_data/SUPPLEMENTARY_DATA_2_24_GUIDE_DE_GENES.csv", row.names = F)
+
 # Plot number of DE genes for each sgRNA
 markers.n <- markers %>%
+  filter(p_val_bh<=0.01) %>%
+  filter(abs(avg_log2FC)>=0.5)%>%
   group_by(target) %>%
   dplyr::summarise(n=n())
 markers.zero <- data.frame(target=gene.order[!gene.order%in%markers.n$target&gene.order!="UPRT"], n=0)
 markers.n <- rbind(markers.n, markers.zero) %>%
   mutate(ident=factor(target, levels=gene.order)) %>%
   mutate(control=ifelse(target%in%c("MYR1", "HCE1", "IST", "GRA16", "GRA24", "GRA28", "ROP16"), yes = "Control", no = "Untested"))
-
 ggplot(markers.n, aes(x=ident, y=n, fill=control))+
   geom_col(colour=NA)+
   theme_pubr(legend="none")+
-  scale_y_continuous(trans=pseudo_log_trans(), breaks=c(1,10,100,1000, 10000), expand=c(0,0), limits=c(0,9000))+
+  scale_y_continuous(trans=pseudo_log_trans(), breaks=c(1,10,100,1000,10000), expand=c(0,0), limits=c(0,900))+
   theme(axis.text.x = element_text(angle=45, hjust = 1),
         text=element_text(size=15),
         plot.margin = margin(t = 0, b = 2, r = 0, l = 0))+
   labs(x="sgRNA", y="Number of DE genes")+
   scale_fill_manual(values=c("slateblue", "grey50"))
-ggsave(filename = "../outputs/fig_1/FIG_1L_24_GUIDE_DE_GENES.png", width=8.2, height=4, dpi=300, scale=1)    
+ggsave(filename = "../outputs/fig_1/FIG_1J_24_GUIDE_DE_GENES.png", width=8.2, height=3.7, dpi=600, scale=1)    
 
 ##### VISION Signature Scores #####
 
@@ -198,7 +205,7 @@ wilcox.test(x = pilot.vis.controls@SigScores[,"MYR1_MARKERS_NAOR"][pilot.vis.con
 ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "MYR1")],
                    fill=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "MYR1")],
                    y=pilot.vis.controls@SigScores[,"MYR1_MARKERS_NAOR"][pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "MYR1")]))+
-  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5)+
+  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5, colour="black")+
   theme_pubr(legend = "none")+
   labs(x=NULL, y=NULL)+
   scale_fill_manual(values = c("grey50", "slateblue"))+
@@ -208,7 +215,7 @@ ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis
   scale_y_continuous(limits=c(min(pilot.vis.controls@SigScores[,"MYR1_MARKERS_NAOR"]), max(pilot.vis.controls@SigScores[,"MYR1_MARKERS_NAOR"])),
                      expand = expansion(mult = c(0, 0.2)))+
   scale_x_discrete(labels=c("sg(UPRT)", "sg(MYR1)"))
-ggsave(filename = "../outputs/fig_1/FIG_1J_SIGNATURE_SCORE_MYR1.png", width=2.2, height=4, dpi=300, scale=1)    
+ggsave(filename = "../outputs/fig_1/FIG_1K_SIGNATURE_SCORE_MYR1.png", width=2.2, height=3.7, dpi=300, scale=1)    
 
 # Test and plot HCE1 signature scores
 wilcox.test(x = pilot.vis.controls@SigScores[,"HCE1_MARKERS_PANAS"][pilot.vis.controls@metaData$guide.target.identity=="HCE1"],
@@ -216,7 +223,7 @@ wilcox.test(x = pilot.vis.controls@SigScores[,"HCE1_MARKERS_PANAS"][pilot.vis.co
 ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "HCE1")],
                    fill=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "HCE1")],
                    y=pilot.vis.controls@SigScores[,"HCE1_MARKERS_PANAS"][pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "HCE1")]))+
-  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5)+
+  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5, colour="black")+
   theme_pubr(legend = "none")+
   labs(x=NULL, y=NULL)+
   scale_fill_manual(values = c("grey50", "slateblue"))+
@@ -226,7 +233,7 @@ ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis
   scale_y_continuous(limits=c(min(pilot.vis.controls@SigScores[,"HCE1_MARKERS_PANAS"]), max(pilot.vis.controls@SigScores[,"HCE1_MARKERS_PANAS"])),
                      expand = expansion(mult = c(0, 0.2)))+
   scale_x_discrete(labels=c("sg(UPRT)", "sg(HCE1)"))
-ggsave(filename = "../outputs/fig_1/FIG_1J_SIGNATURE_SCORE_HCE1.png", width=2.2, height=4, dpi=300, scale=1)    
+ggsave(filename = "../outputs/fig_1/FIG_1K_SIGNATURE_SCORE_HCE1.png", width=2.2, height=3.7, dpi=300, scale=1)    
 
 # Test and plot IST signature scores
 wilcox.test(x = pilot.vis.controls@SigScores[,"IST_MARKERS_MATTA"][pilot.vis.controls@metaData$guide.target.identity=="IST"],
@@ -234,7 +241,7 @@ wilcox.test(x = pilot.vis.controls@SigScores[,"IST_MARKERS_MATTA"][pilot.vis.con
 ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "IST")],
                    fill=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "IST")],
                    y=pilot.vis.controls@SigScores[,"IST_MARKERS_MATTA"][pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "IST")]))+
-  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5)+
+  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5, colour="black")+
   theme_pubr(legend = "none")+
   labs(x=NULL, y=NULL)+
   scale_fill_manual(values = c("grey50", "slateblue"))+
@@ -244,7 +251,7 @@ ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis
   scale_y_continuous(limits=c(min(pilot.vis.controls@SigScores[,"IST_MARKERS_MATTA"]), max(pilot.vis.controls@SigScores[,"IST_MARKERS_MATTA"])),
                      expand = expansion(mult = c(0, 0.2)))+
   scale_x_discrete(labels=c("sg(UPRT)", "sg(IST)"))
-ggsave(filename = "../outputs/fig_1/FIG_1J_SIGNATURE_SCORE_IST.png", width=2.2, height=4, dpi=300, scale=1)    
+ggsave(filename = "../outputs/fig_1/FIG_1K_SIGNATURE_SCORE_IST.png", width=2.2, height=3.7, dpi=300, scale=1)    
 
 # Test and plot GRA16 signature scores
 wilcox.test(x = pilot.vis.controls@SigScores[,"GRA16_MARKERS_BOUGDOUR"][pilot.vis.controls@metaData$guide.target.identity=="GRA16"],
@@ -252,7 +259,7 @@ wilcox.test(x = pilot.vis.controls@SigScores[,"GRA16_MARKERS_BOUGDOUR"][pilot.vi
 ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "GRA16")],
                    fill=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "GRA16")],
                    y=pilot.vis.controls@SigScores[,"GRA16_MARKERS_BOUGDOUR"][pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "GRA16")]))+
-  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5)+
+  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5, colour="black")+
   theme_pubr(legend = "none")+
   labs(x=NULL, y=NULL)+
   scale_fill_manual(values = c("grey50", "slateblue"))+
@@ -262,7 +269,7 @@ ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis
   scale_y_continuous(limits=c(min(pilot.vis.controls@SigScores[,"GRA16_MARKERS_BOUGDOUR"]), max(pilot.vis.controls@SigScores[,"GRA16_MARKERS_BOUGDOUR"])),
                      expand = expansion(mult = c(0, 0.2)))+
   scale_x_discrete(labels=c("sg(UPRT)", "sg(GRA16)"))
-ggsave(filename = "../outputs/fig_1/FIG_1J_SIGNATURE_SCORE_GRA16.png", width=2.2, height=4, dpi=300, scale=1)    
+ggsave(filename = "../outputs/fig_1/FIG_1K_SIGNATURE_SCORE_GRA16.png", width=2.2, height=3.7, dpi=300, scale=1)    
 
 # Test and plot GRA24 signature scores
 wilcox.test(x = pilot.vis.controls@SigScores[,"GRA24_MARKERS_BRAUN"][pilot.vis.controls@metaData$guide.target.identity=="GRA24"],
@@ -270,7 +277,7 @@ wilcox.test(x = pilot.vis.controls@SigScores[,"GRA24_MARKERS_BRAUN"][pilot.vis.c
 ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "GRA24")],
                    fill=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "GRA24")],
                    y=pilot.vis.controls@SigScores[,"GRA24_MARKERS_BRAUN"][pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "GRA24")]))+
-  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5)+
+  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5, colour="black")+
   theme_pubr(legend = "none")+
   labs(x=NULL, y=NULL)+
   scale_fill_manual(values = c("grey50", "slateblue"))+
@@ -280,7 +287,7 @@ ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis
   scale_y_continuous(limits=c(min(pilot.vis.controls@SigScores[,"GRA24_MARKERS_BRAUN"]), max(pilot.vis.controls@SigScores[,"GRA24_MARKERS_BRAUN"])),
                      expand = expansion(mult = c(0, 0.2)))+
   scale_x_discrete(labels=c("sg(UPRT)", "sg(GRA24)"))
-ggsave(filename = "../outputs/fig_1/FIG_1J_SIGNATURE_SCORE_GRA24.png", width=2.2, height=4, dpi=300, scale=1)    
+ggsave(filename = "../outputs/fig_1/FIG_1K_SIGNATURE_SCORE_GRA24.png", width=2.2, height=3.7, dpi=300, scale=1)    
 
 # Test and plot GRA28 signature scores
 wilcox.test(x = pilot.vis.controls@SigScores[,"GRA28_MARKERS_RUDZKI"][pilot.vis.controls@metaData$guide.target.identity=="GRA28"],
@@ -288,7 +295,7 @@ wilcox.test(x = pilot.vis.controls@SigScores[,"GRA28_MARKERS_RUDZKI"][pilot.vis.
 ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "GRA28")],
                    fill=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "GRA28")],
                    y=pilot.vis.controls@SigScores[,"GRA28_MARKERS_RUDZKI"][pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "GRA28")]))+
-  geom_violin(adjust=1.5, scale = "width",  draw_quantiles = 0.5, size=0.5)+
+  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5, colour="black")+
   theme_pubr(legend = "none")+
   labs(x=NULL, y=NULL)+
   scale_fill_manual(values = c("grey50", "slateblue"))+
@@ -298,7 +305,7 @@ ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis
   scale_y_continuous(limits=c(min(pilot.vis.controls@SigScores[,"GRA28_MARKERS_RUDZKI"]), max(pilot.vis.controls@SigScores[,"GRA28_MARKERS_RUDZKI"])),
                      expand = expansion(mult = c(0, 0.2)))+
   scale_x_discrete(labels=c("sg(UPRT)", "sg(GRA28)"))
-ggsave(filename = "../outputs/fig_1/FIG_1J_SIGNATURE_SCORE_GRA28.png", width=2.2, height=4, dpi=300, scale=1)    
+ggsave(filename = "../outputs/fig_1/FIG_1K_SIGNATURE_SCORE_GRA28.png", width=2.2, height=3.7, dpi=300, scale=1)    
 
 # Test and plot ROP16 signature scores
 wilcox.test(x = pilot.vis.controls@SigScores[,"ROP16_MARKERS_SAEIJ"][pilot.vis.controls@metaData$guide.target.identity=="ROP16"],
@@ -306,7 +313,7 @@ wilcox.test(x = pilot.vis.controls@SigScores[,"ROP16_MARKERS_SAEIJ"][pilot.vis.c
 ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "ROP16")],
                    fill=pilot.vis.controls@metaData$guide.target.identity[pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "ROP16")],
                    y=pilot.vis.controls@SigScores[,"ROP16_MARKERS_SAEIJ"][pilot.vis.controls@metaData$guide.target.identity%in%c("UPRT", "ROP16")]))+
-  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5)+
+  geom_violin(adjust=1.5, scale = "width", draw_quantiles = 0.5, size=0.5, colour="black")+
   theme_pubr(legend = "none")+
   labs(x=NULL, y=NULL)+
   scale_fill_manual(values = c("grey50", "slateblue"))+
@@ -316,4 +323,4 @@ ggplot(mapping=aes(x=pilot.vis.controls@metaData$guide.target.identity[pilot.vis
   scale_y_continuous(limits=c(min(pilot.vis.controls@SigScores[,"ROP16_MARKERS_SAEIJ"]), max(pilot.vis.controls@SigScores[,"ROP16_MARKERS_SAEIJ"])),
                      expand = expansion(mult = c(0, 0.2)))+
   scale_x_discrete(labels=c("sg(UPRT)", "sg(ROP16)"))
-ggsave(filename = "../outputs/fig_1/FIG_1J_SIGNATURE_SCORE_ROP16.png", width=2.2, height=4, dpi=300, scale=1)    
+ggsave(filename = "../outputs/fig_1/FIG_1K_SIGNATURE_SCORE_ROP16.png", width=2.2, height=3.7, dpi=300, scale=1)    
