@@ -201,7 +201,7 @@ ggsave(filename = "../outputs/fig_s3/FIG_S3H_CORRELATION_PLASMID_VS_CELLS_PER_GU
 
 cor.test(x=counts.guide$plasmid.counts, y=counts.guide$n.cells, method = "pearson")  
 
-write.csv(counts.guide, file="../outputs/supplementary_data/SUPPLEMENTARY_DATA_3_PROTOSPACER_SEQUENCES.csv")
+write.csv(counts.guide, file="../outputs/supplementary_data/SUPPLEMENTARY_DATA_3_PROTOSPACER_SEQUENCES.csv", row.names = F)
 
 
 # Import plasmid counts for guides and sum counts by gene
